@@ -47,10 +47,7 @@ public class GameStoreData
         games.Add(game);
     }
 
-    public void RemoveGame(Guid id)
-    {
-        games.RemoveAll(g => g.Id == id);
-    }
+    public void RemoveGame(Guid id) => games.RemoveAll(g => g.Id == id);
 
     public IEnumerable<Genre> GetGenres() => genres;
     

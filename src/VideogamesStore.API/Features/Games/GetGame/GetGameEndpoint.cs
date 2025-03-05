@@ -13,7 +13,7 @@ public static class GetGameEndpoint
             Game? game = dbContext.Games.Find(id);
 
             return game is null ? Results.NotFound() 
-                                : Results.Ok(new GetGameResponse(
+                                : Results.Ok(new GetGameDtos.Response(
                                     game.Id, 
                                     game.Name,
                                     game.Platform,

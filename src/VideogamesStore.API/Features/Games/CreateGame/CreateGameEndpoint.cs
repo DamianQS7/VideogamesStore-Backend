@@ -8,18 +8,18 @@ public static class CreateGameEndpoint
 {
     public static void MapPostGame(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/", (CreateGameRequest gameDto, GameStoreContext dbContext) => 
+        app.MapPost("/", (CreateGameDtos.Request request, GameStoreContext dbContext) => 
         {
             Game game = new()
             {
                 Id = Guid.NewGuid(),
-                Name = gameDto.Name,
-                GenreId = gameDto.GenreId,
-                Price = gameDto.Price,
-                Platform = gameDto.Platform,
-                Publisher = gameDto.Publisher,
-                ReleaseDate = gameDto.ReleaseDate,
-                Description = gameDto.Description
+                Name = request.Name,
+                GenreId = request.GenreId,
+                Price = request.Price,
+                Platform = request.Platform,
+                Publisher = request.Publisher,
+                ReleaseDate = request.ReleaseDate,
+                Description = request.Description
             };
 
             dbContext.Games.Add(game);
@@ -28,7 +28,7 @@ public static class CreateGameEndpoint
             return Results.CreatedAtRoute(
                 EndpointNames.GetGame, 
                 new { id = game.Id}, 
-                new CreateGameResponse(
+                new CreateGameDtos.Response(
                     game.Id,
                     game.Name,
                     game.Publisher,

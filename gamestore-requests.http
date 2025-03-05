@@ -14,7 +14,7 @@ Content-Type: application/json
 
 {
     "name": "Final Fantasy 8",
-    "genreId": "fd323541-e8ef-4994-9e1c-aad0f7425715",
+    "genreId": "b5474d26-9bdb-4e10-993c-f44c9e1317f4",
     "platform": "Play Station 1",
     "publisher": "Squaresoft",
     "price": 19.99,

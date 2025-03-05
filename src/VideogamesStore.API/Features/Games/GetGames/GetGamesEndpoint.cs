@@ -10,7 +10,7 @@ public static class GetGamesEndpoint
     {
         app.MapGet("/", (GameStoreContext dbContext) => 
             dbContext.Games.Include(game => game.Genre) 
-                           .Select(game => new GameSummaryResponse(
+                           .Select(game => new GetGamesDtos.Response(
                                game.Id,
                                game.Name,
                                game.Platform,

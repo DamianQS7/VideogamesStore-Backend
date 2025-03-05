@@ -3,7 +3,9 @@ using System.ComponentModel.DataAnnotations;
 namespace VideogamesStore.API.Features.Games.CreateGame;
 
 public record CreateGameRequest(
-    [Required]  string Name,
+    [Required] string Name,
+    [Required] string Publisher, 
+    [Required] string Platform, 
     Guid GenreId,
     [Range(1, 200)] decimal Price,
     DateOnly ReleaseDate,
@@ -12,7 +14,9 @@ public record CreateGameRequest(
 
 public record CreateGameResponse(
     Guid Id, 
-    string Name, 
+    string Name,
+    string Publisher,
+    string Platform, 
     Guid GenreId, 
     decimal Price, 
     DateOnly ReleaseDate, 

@@ -1,0 +1,46 @@
+@baseUrl = http://localhost:5010
+@gameId = c6800207-142f-41a3-a450-4b9224a6f608
+#Get all games
+GET {{baseUrl}}/games
+
+###
+#Get game by ID
+GET {{baseUrl}}/games/{{gameId}}
+
+###
+# POST a game
+POST {{baseUrl}}/games
+Content-Type: application/json
+
+{
+    "name": "Final Fantasy 8",
+    "genreId": "fd323541-e8ef-4994-9e1c-aad0f7425715",
+    "platform": "Play Station 1",
+    "publisher": "Squaresoft",
+    "price": 19.99,
+    "releaseDate": "1999-02-11",
+    "description": "Very good game."
+}
+
+###
+# Update a Game
+PUT {{baseUrl}}/games/{{gameId}}
+Content-Type: application/json
+
+{
+    "name": "Final Fantasy 8",
+    "genreId": "fd323541-e8ef-4994-9e1c-aad0f7425715",
+    "platform": "Play Station 1",
+    "publisher": "Squaresoft",
+    "price": 15.99,
+    "releaseDate": "1999-02-11",
+    "description": "Very good game!!"
+}
+
+###
+# Delete a Game
+DELETE {{baseUrl}}/games/{{gameId}}
+
+###
+# Get all Genres
+GET {{baseUrl}}/genres

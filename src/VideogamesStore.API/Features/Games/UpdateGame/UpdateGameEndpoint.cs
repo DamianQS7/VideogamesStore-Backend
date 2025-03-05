@@ -1,5 +1,3 @@
-using System;
-using System.Security.Cryptography.X509Certificates;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
@@ -8,26 +6,25 @@ namespace VideogamesStore.API.Features.Games.UpdateGame;
 
 public static class UpdateGameEndpoint
 {
-    public static void MapPutGame(this IEndpointRouteBuilder app, GameStoreData data)
+    public static void MapPutGame(this IEndpointRouteBuilder app)
     {
-        app.MapPut("/{id}", (Guid id, UpdatedGameRequest updatedGame) => 
+        app.MapPut("/{id}", (Guid id, UpdatedGameRequest updatedGame, GameStoreContext dbContext) => 
         {
-            Game? existingGame = data.GetGameById(id);
+            Game? existingGame = dbContext.Games.Find(id);
             
             if (existingGame is null)
                 return Results.NotFound();
 
-            Genre? genre = data.GetGenreById(updatedGame.GenreId);
-
-            if (genre is null)
-                return Results.BadRequest("Invalid genre ID");
-
             existingGame.Name = updatedGame.Name;
-            existingGame.Genre = genre;
+            existingGame.Platform = updatedGame.Platform;
+            existingGame.Publisher = updatedGame.Publisher;
+            existingGame.GenreId = updatedGame.GenreId;
             existingGame.Price = updatedGame.Price;
             existingGame.ReleaseDate = updatedGame.ReleaseDate;
             existingGame.Description = updatedGame.Description;
 
+            dbContext.SaveChanges();
+            
             return Results.NoContent();
         })
         .WithName(EndpointNames.UpdateGame)

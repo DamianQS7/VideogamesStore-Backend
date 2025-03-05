@@ -22,6 +22,9 @@ public class GameStoreData
                 Id = Guid.NewGuid(),
                 Name = "Final Fantasy IX",
                 Genre = genres[1],
+                GenreId = genres[1].Id,
+                Platform = "Play Station 1",
+                Publisher = "Squaresoft",
                 Price = 19.99m,
                 ReleaseDate = new DateOnly(2000, 7, 7),
                 Description = "Best and most underrated final fantasy game of all times."
@@ -30,6 +33,9 @@ public class GameStoreData
                 Id = Guid.NewGuid(),
                 Name = "Final Fantasy VII",
                 Genre = genres[1],
+                GenreId = genres[1].Id,
+                Platform = "Play Station 1",
+                Publisher = "Squaresoft",
                 Price = 19.99m,
                 ReleaseDate = new DateOnly(1997, 1, 31),
                 Description = "Very interesting characters."

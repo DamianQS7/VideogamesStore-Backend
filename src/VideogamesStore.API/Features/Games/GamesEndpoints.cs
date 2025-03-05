@@ -9,23 +9,23 @@ namespace VideogamesStore.API.Features.Games;
 
 public static class GamesEndpoints
 {
-    public static void MapGames(this IEndpointRouteBuilder app, GameStoreData data)
+    public static void MapGames(this IEndpointRouteBuilder app)
     {
         RouteGroupBuilder group = app.MapGroup("/games");
 
         // GET all games
-        group.MapGetGames(data);
+        group.MapGetGames();
 
         // GET game by ID
-        group.MapGetGame(data);
+        group.MapGetGame();
 
         // POST game
-        group.MapPostGame(data);
+        group.MapPostGame();
 
         // PUT Game
-        group.MapPutGame(data);
+        group.MapPutGame();
 
         // Delete game
-        group.MapDeleteGame(data);
+        group.MapDeleteGame();
     }
 }

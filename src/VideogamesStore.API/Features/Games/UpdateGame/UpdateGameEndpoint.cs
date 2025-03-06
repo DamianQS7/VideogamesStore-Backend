@@ -15,13 +15,7 @@ public static class UpdateGameEndpoint
             if (existingGame is null)
                 return Results.NotFound();
 
-            existingGame.Name = request.Name;
-            existingGame.Platform = request.Platform;
-            existingGame.Publisher = request.Publisher;
-            existingGame.GenreId = request.GenreId;
-            existingGame.Price = request.Price;
-            existingGame.ReleaseDate = request.ReleaseDate;
-            existingGame.Description = request.Description;
+            existingGame.UpdateWithRequest(request);
 
             await dbContext.SaveChangesAsync();
             

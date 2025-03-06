@@ -1,3 +1,6 @@
 namespace VideogamesStore.API.Features.Genres.GetGenres;
 
-public record GetGenreResponse(Guid Id, string Name);
+public static class GetGenresDtos
+{
+    public record Response(Guid Id, string Name);   
+}

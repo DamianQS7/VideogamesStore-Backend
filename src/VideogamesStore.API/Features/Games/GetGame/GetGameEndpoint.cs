@@ -13,16 +13,7 @@ public static class GetGameEndpoint
             Game? game = await dbContext.Games.FindAsync(id);
 
             return game is null ? Results.NotFound() 
-                                : Results.Ok(new GetGameDtos.Response(
-                                    game.Id, 
-                                    game.Name,
-                                    game.Platform,
-                                    game.Publisher, 
-                                    game.GenreId,
-                                    game.Price, 
-                                    game.ReleaseDate, 
-                                    game.Description
-                                ));
+                                : Results.Ok(game.MapToResponse());
         })
         .WithName(EndpointNames.GetGame); 
     }

@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:5010
-@gameId = c6800207-142f-41a3-a450-4b9224a6f608
+@gameId = 7dc739ab-8869-4888-9c70-1a48bfb9e1cc
 #Get all games
 GET {{baseUrl}}/games
 
@@ -13,8 +13,8 @@ POST {{baseUrl}}/games
 Content-Type: application/json
 
 {
-    "name": "Final Fantasy 8",
-    "genreId": "b5474d26-9bdb-4e10-993c-f44c9e1317f4",
+    "name": "Final Fantasy VIII",
+    "genreId": "52b99897-9eba-4cbf-8cc8-b1674384e6e6",
     "platform": "Play Station 1",
     "publisher": "Squaresoft",
     "price": 19.99,
@@ -28,13 +28,13 @@ PUT {{baseUrl}}/games/{{gameId}}
 Content-Type: application/json
 
 {
-    "name": "Final Fantasy 8",
-    "genreId": "fd323541-e8ef-4994-9e1c-aad0f7425715",
+    "name": "Final Fantasy IX",
+    "genreId": "52b99897-9eba-4cbf-8cc8-b1674384e6e6",
     "platform": "Play Station 1",
     "publisher": "Squaresoft",
-    "price": 15.99,
-    "releaseDate": "1999-02-11",
-    "description": "Very good game!!"
+    "price": 19.99,
+    "releaseDate": "2000-07-07",
+    "description": "Most underrated Final Fantasy ever!!"
 }
 
 ###

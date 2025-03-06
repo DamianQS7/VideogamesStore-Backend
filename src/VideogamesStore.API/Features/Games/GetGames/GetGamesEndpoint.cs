@@ -11,15 +11,7 @@ public static class GetGamesEndpoint
 
     private static async Task<List<GetGamesDtos.Response>>? Handler(GameStoreContext dbContext)
         => await dbContext.Games.Include(game => game.Genre) 
-                           .Select(game => new GetGamesDtos.Response(
-                               game.Id,
-                               game.Name,
-                               game.Platform,
-                               game.Publisher,
-                               game.Genre!.Name,
-                               game.Price,
-                               game.ReleaseDate
-                           ))
+                           .Select(game => game.MapToResponse())
                            .AsNoTracking()
                            .ToListAsync();
 }

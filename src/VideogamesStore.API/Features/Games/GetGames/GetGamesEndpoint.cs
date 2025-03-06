@@ -7,9 +7,10 @@ namespace VideogamesStore.API.Features.Games.GetGames;
 public static class GetGamesEndpoint
 {
     public static void MapGetGames(this IEndpointRouteBuilder app)
-    {
-        app.MapGet("/", (GameStoreContext dbContext) => 
-            dbContext.Games.Include(game => game.Genre) 
+        => app.MapGet("/", Handler).WithName(EndpointNames.GetGames);
+
+    private static async Task<List<GetGamesDtos.Response>>? Handler(GameStoreContext dbContext)
+        => await dbContext.Games.Include(game => game.Genre) 
                            .Select(game => new GetGamesDtos.Response(
                                game.Id,
                                game.Name,
@@ -19,7 +20,6 @@ public static class GetGamesEndpoint
                                game.Price,
                                game.ReleaseDate
                            ))
-                           .AsNoTracking())
-                           .WithName(EndpointNames.GetGames);
-    }
+                           .AsNoTracking()
+                           .ToListAsync();
 }

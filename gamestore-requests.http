@@ -1,7 +1,7 @@
 @baseUrl = http://localhost:5010
 @gameId = 7dc739ab-8869-4888-9c70-1a48bfb9e1cc
 #Get all games
-GET {{baseUrl}}/games
+GET {{baseUrl}}/games?search=Pokemon
 
 ###
 #Get game by ID
@@ -13,13 +13,13 @@ POST {{baseUrl}}/games
 Content-Type: application/json
 
 {
-    "name": "Final Fantasy VIII",
+    "name": "Pokemon Blue",
     "genreId": "52b99897-9eba-4cbf-8cc8-b1674384e6e6",
-    "platform": "Play Station 1",
-    "publisher": "Squaresoft",
+    "platform": "GameBoy",
+    "publisher": "Nintendo",
     "price": 19.99,
-    "releaseDate": "1999-02-11",
-    "description": "Very good game."
+    "releaseDate": "1998-09-28",
+    "description": "Catch and collect 150+ Pokemons and explore the original Kanto region in this retro game! Pokemon Blue is among the very first Pokemon titles in the series along with Red, Green, and Yellow"
 }
 
 ###

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games;
 using VideogamesStore.API.Features.Genres;
+using VideogamesStore.API.Shared.ErrorHandling;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -18,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
                             HttpLoggingFields.Duration;
         opt.CombineLogs = true;
     });
+    builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
 }
 
 var app = builder.Build();
@@ -26,6 +28,14 @@ var app = builder.Build();
     app.MapGenres();
 
     app.UseHttpLogging();
+
+    if(!app.Environment.IsDevelopment())
+    {
+        // We already have for development the DeveloperExceptionPage
+        app.UseExceptionHandler();
+    }
+
+    app.UseStatusCodePages();
     await app.InitializeDbAsync();
 
     app.Run();

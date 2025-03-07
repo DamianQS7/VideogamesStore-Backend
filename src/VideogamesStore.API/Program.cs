@@ -4,13 +4,16 @@ using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games;
 using VideogamesStore.API.Features.Genres;
 using VideogamesStore.API.Shared.ErrorHandling;
+using VideogamesStore.API.Shared.FileUpload;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    // Database Configuration
     string? connString = builder.Configuration.GetConnectionString("VideogamesStore");
     //builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
     builder.Services.AddSqlite<GameStoreContext>(connString);
-    builder.Services.AddSingleton<GameStoreData>();
+
+    // HttpLogging Configuration
     builder.Services.AddHttpLogging(opt => 
     {
         opt.LoggingFields = HttpLoggingFields.RequestMethod |
@@ -19,21 +22,31 @@ var builder = WebApplication.CreateBuilder(args);
                             HttpLoggingFields.Duration;
         opt.CombineLogs = true;
     });
+
+    // Error Handling Configuration
     builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
+
+    // Open API Support
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddHttpContextAccessor()
+                    .AddSingleton<FileUploader>();
 }
 
 var app = builder.Build();
 {
+    app.UseStaticFiles();
+
     app.MapGames();
     app.MapGenres();
 
     app.UseHttpLogging();
 
-    if(!app.Environment.IsDevelopment())
-    {
-        // We already have for development the DeveloperExceptionPage
+    if(app.Environment.IsDevelopment())
+        app.UseSwagger();
+    else
         app.UseExceptionHandler();
-    }
 
     app.UseStatusCodePages();
     await app.InitializeDbAsync();

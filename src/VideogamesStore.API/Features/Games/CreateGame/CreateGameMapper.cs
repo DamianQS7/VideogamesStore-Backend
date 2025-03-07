@@ -5,7 +5,7 @@ namespace VideogamesStore.API.Features.Games.CreateGame;
 
 public static class CreateGameMapper
 {
-    public static Game MapToGame(this Request request)
+    public static Game MapToGame(this CreateGameRequest request, string imageUrl)
         => new ()
             {
                 Id = Guid.NewGuid(),
@@ -15,10 +15,11 @@ public static class CreateGameMapper
                 Platform = request.Platform,
                 Publisher = request.Publisher,
                 ReleaseDate = request.ReleaseDate,
-                Description = request.Description
+                Description = request.Description,
+                ImageUrl = imageUrl
             };
 
-    public static Response MapToResponse(this Game game)
+    public static CreateGameResponse MapToResponse(this Game game)
         => new (
             game.Id,
             game.Name,
@@ -27,7 +28,8 @@ public static class CreateGameMapper
             game.GenreId,
             game.Price,
             game.ReleaseDate,
-            game.Description
+            game.Description,
+            game.ImageUrl
         );
 }
 

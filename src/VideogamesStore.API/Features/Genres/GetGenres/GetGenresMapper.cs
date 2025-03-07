@@ -5,6 +5,6 @@ namespace VideogamesStore.API.Features.Genres.GetGenres;
 
 public static class GetGenresMapper
 {
-    public static Response MapToResponse(this Genre genre) => new(genre.Id, genre.Name);
+    public static GetGenresResponse MapToResponse(this Genre genre) => new(genre.Id, genre.Name);
     
 }

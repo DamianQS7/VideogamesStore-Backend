@@ -5,7 +5,7 @@ namespace VideogamesStore.API.Features.Games.UpdateGame;
 
 public static class UpdateGameMapper
 {
-    public static void UpdateWithRequest(this Game game, Request request)
+    public static void UpdateWithRequest(this Game game, UpdateGameRequest request)
     {
         game.Name = request.Name;
         game.Platform = request.Platform;
@@ -14,5 +14,10 @@ public static class UpdateGameMapper
         game.Price = request.Price;
         game.ReleaseDate = request.ReleaseDate;
         game.Description = request.Description;
+    }
+
+    public static void UpdateImageUrl(this Game game, string imageUrl)
+    {
+        game.ImageUrl = imageUrl;
     }
 }

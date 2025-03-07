@@ -6,7 +6,7 @@ namespace VideogamesStore.API.Features.Games.GetGame;
 
 public static class GetGameMapper
 {
-    public static Response MapToResponse(this Game game) =>
+    public static GetGameResponse MapToResponse(this Game game) =>
         new(
             game.Id, 
             game.Name,
@@ -15,6 +15,7 @@ public static class GetGameMapper
             game.GenreId,
             game.Price, 
             game.ReleaseDate, 
-            game.Description
+            game.Description,
+            game.ImageUrl
         );
 }

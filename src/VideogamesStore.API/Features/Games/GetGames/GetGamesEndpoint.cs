@@ -11,7 +11,7 @@ public static class GetGamesEndpoint
         => app.MapGet("/", Handler).WithName(EndpointNames.GetGames);
 
     private static async Task<PagedResponse>? Handler(
-        GameStoreContext dbContext, [AsParameters] Request request)
+        GameStoreContext dbContext, [AsParameters] GetGamesRequest request)
     {
         var games = await dbContext.Games
                             .Where(game => string.IsNullOrWhiteSpace(request.Search) 

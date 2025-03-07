@@ -3,17 +3,18 @@ namespace VideogamesStore.API.Features.Games.GetGames;
 public static class GetGamesDtos
 {
 
-    public record Request(int PageNumber = 1, int PageSize = 5, string? Search = null);
+    public record GetGamesRequest(int PageNumber = 1, int PageSize = 5, string? Search = null);
 
-    public record Response(
+    public record GetGamesResponse(
         Guid Id,
         string Name,
         string Platform,
         string Publisher,
         string Genre,
         decimal Price,
-        DateOnly ReleaseDate
+        DateOnly ReleaseDate,
+        string ImageUrl
     );
 
-    public record PagedResponse(int TotalPages, IEnumerable<Response> Data);
+    public record PagedResponse(int TotalPages, IEnumerable<GetGamesResponse> Data);
 }

@@ -1,18 +1,37 @@
+using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
+using VideogamesStore.API.Shared.FileUpload;
+using static VideogamesStore.API.Features.Games.CreateGame.CreateGameDtos;
 
 namespace VideogamesStore.API.Features.Games.CreateGame;
 
 public static class CreateGameEndpoint
 {
+    public const string DefaultImageUrl = "https://placehold.co/100";
     public static void MapPostGame(this IEndpointRouteBuilder app)
     {
-        app.MapPost("/", async (CreateGameDtos.Request request, 
+        app.MapPost("/", async ([FromForm] CreateGameRequest request, 
                                 GameStoreContext dbContext, 
-                                ILogger<Program> logger) => 
+                                ILogger<Program> logger,
+                                FileUploader fileUploader) => 
         {
-            Game game = request.MapToGame();
+            string imageUrl = DefaultImageUrl;
+
+            if(request.ImageFile is not null)
+            {
+                var fileUploadResult = await fileUploader.UploadFileAsync(
+                    request.ImageFile, StorageNames.GameImagesFolder
+                );
+
+                if (!fileUploadResult.IsSuccess)
+                    return Results.BadRequest(fileUploadResult.ErrorMessage);
+
+                imageUrl = fileUploadResult.FileUrl!;
+            }
+
+            Game game = request.MapToGame(imageUrl);
 
             await dbContext.Games.AddAsync(game);
             await dbContext.SaveChangesAsync();
@@ -25,6 +44,7 @@ public static class CreateGameEndpoint
                 game.MapToResponse());
         })
         .WithName(EndpointNames.PostGame)
-        .WithParameterValidation(); // This comes from nuget package MinimalApis.Extensions
+        .WithParameterValidation() // This comes from nuget package MinimalApis.Extensions
+        .DisableAntiforgery();
     }
 }

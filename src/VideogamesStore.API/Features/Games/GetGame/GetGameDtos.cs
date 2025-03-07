@@ -2,7 +2,7 @@ namespace VideogamesStore.API.Features.Games.GetGame;
 
 public static class GetGameDtos 
 {
-    public record Response(
+    public record GetGameResponse(
         Guid Id, 
         string Name,
         string Platform,
@@ -10,6 +10,7 @@ public static class GetGameDtos
         Guid GenreId, 
         decimal Price, 
         DateOnly ReleaseDate, 
-        string Description
+        string Description,
+        string ImageUrl
     );
 }

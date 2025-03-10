@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
@@ -15,8 +17,18 @@ public static class CreateGameEndpoint
         app.MapPost("/", async ([FromForm] CreateGameRequest request, 
                                 GameStoreContext dbContext, 
                                 ILogger<Program> logger,
-                                FileUploader fileUploader) => 
+                                FileUploader fileUploader,
+                                ClaimsPrincipal user) => 
         {
+            if(user?.Identity?.IsAuthenticated == false)
+                 return Results.Unauthorized();
+
+            //string? userId = user?.FindFirstValue(ClaimTypes.NameIdentifier); // Old way, requires options in Program.cs
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Sub); // New way
+
+            if (string.IsNullOrEmpty(userId))
+                return Results.Unauthorized();
+
             string imageUrl = DefaultImageUrl;
 
             if(request.ImageFile is not null)
@@ -31,7 +43,7 @@ public static class CreateGameEndpoint
                 imageUrl = fileUploadResult.FileUrl!;
             }
 
-            Game game = request.MapToGame(imageUrl);
+            Game game = request.MapToGame(imageUrl, userId!);
 
             await dbContext.Games.AddAsync(game);
             await dbContext.SaveChangesAsync();

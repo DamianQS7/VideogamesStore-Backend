@@ -26,6 +26,7 @@ public static class CreateGameDtos
         decimal Price, 
         DateOnly ReleaseDate, 
         string Description,
-        string ImageUrl
+        string ImageUrl,
+        string LastUpdatedBy
     );
 }

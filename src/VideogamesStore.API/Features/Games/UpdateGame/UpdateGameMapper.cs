@@ -20,4 +20,9 @@ public static class UpdateGameMapper
     {
         game.ImageUrl = imageUrl;
     }
+
+    public static void UpdateLastUpdatedBy(this Game game, string userId)
+    {
+        game.LastUpdatedBy = userId;
+    }
 }

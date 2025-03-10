@@ -30,6 +30,10 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
+    // Register Authentication
+    builder.Services.AddAuthentication()
+                    .AddJwtBearer(options => { options.MapInboundClaims = false; });
+
     builder.Services.AddHttpContextAccessor()
                     .AddSingleton<FileUploader>();
 }

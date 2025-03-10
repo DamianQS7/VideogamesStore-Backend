@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games;
 using VideogamesStore.API.Features.Genres;
+using VideogamesStore.API.Features.ShoppingCarts;
 using VideogamesStore.API.Shared.ErrorHandling;
 using VideogamesStore.API.Shared.FileUpload;
 
@@ -44,6 +45,7 @@ var app = builder.Build();
 
     app.MapGames();
     app.MapGenres();
+    app.MapShoppingCarts();
 
     app.UseHttpLogging();
 

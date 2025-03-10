@@ -15,9 +15,9 @@ public static class CreateGameEndpoint
     public static void MapPostGame(this IEndpointRouteBuilder app)
     {
         app.MapPost("/", async ([FromForm] CreateGameRequest request, 
-                                GameStoreContext dbContext, 
-                                ILogger<Program> logger,
-                                FileUploader fileUploader,
+                                [FromServices] GameStoreContext dbContext, 
+                                [FromServices] ILogger<Program> logger,
+                                [FromServices] FileUploader fileUploader,
                                 ClaimsPrincipal user) => 
         {
             if(user?.Identity?.IsAuthenticated == false)

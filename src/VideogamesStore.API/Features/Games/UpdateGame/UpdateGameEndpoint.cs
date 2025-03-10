@@ -1,3 +1,5 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
@@ -15,8 +17,16 @@ public static class UpdateGameEndpoint
             Guid id, 
             [FromForm] UpdateGameRequest request, 
             GameStoreContext dbContext,
-            FileUploader fileUploader) => 
+            FileUploader fileUploader,
+            ClaimsPrincipal user) => 
         {
+            if(user?.Identity?.IsAuthenticated == false)
+                 return Results.Unauthorized();
+
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrEmpty(userId))
+                return Results.Unauthorized();
             Game? existingGame = await dbContext.Games.FindAsync(id);
             
             if (existingGame is null)

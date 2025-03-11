@@ -9,7 +9,9 @@ namespace VideogamesStore.API.Features.Games.GetGames;
 public static class GetGamesEndpoint
 {
     public static void MapGetGames(this IEndpointRouteBuilder app)
-        => app.MapGet("/", Handler).WithName(EndpointNames.GetGames);
+        => app.MapGet("/", Handler)
+              .WithName(EndpointNames.GetGames)
+              .AllowAnonymous();
 
     private static async Task<PagedResponse>? Handler(
         [FromServices] GameStoreContext dbContext, 

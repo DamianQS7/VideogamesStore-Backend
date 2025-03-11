@@ -16,6 +16,7 @@ public static class GetGameEndpoint
             return game is null ? Results.NotFound() 
                                 : Results.Ok(game.MapToResponse());
         })
-        .WithName(EndpointNames.GetGame); 
+        .WithName(EndpointNames.GetGame)
+        .AllowAnonymous(); 
     }
 }

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
+using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.FileUpload;
 using static VideogamesStore.API.Features.Games.CreateGame.CreateGameDtos;
 
@@ -57,6 +58,7 @@ public static class CreateGameEndpoint
         })
         .WithName(EndpointNames.PostGame)
         .WithParameterValidation() // This comes from nuget package MinimalApis.Extensions
-        .DisableAntiforgery();
+        .DisableAntiforgery()
+        .RequireAuthorization(Policies.AdminAccess);
     }
 }

@@ -11,7 +11,8 @@ public static class GetGenresEndpoint
             => await dbContext.Genres
                     .Select(genre => genre.MapToResponse())
                     .AsNoTracking()
-                    .ToListAsync());
+                    .ToListAsync()
+                    ).AllowAnonymous();
     }
     // private static async Task<List<Response>> Handler(GameStoreContext dbContext)
     //     => await dbContext.Genres

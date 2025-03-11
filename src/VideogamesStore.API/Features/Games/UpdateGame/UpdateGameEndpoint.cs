@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
+using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.FileUpload;
 using static VideogamesStore.API.Features.Games.UpdateGame.UpdateGameDtos;
 
@@ -52,6 +53,7 @@ public static class UpdateGameEndpoint
         })
         .WithName(EndpointNames.UpdateGame)
         .WithParameterValidation()
-        .DisableAntiforgery();
+        .DisableAntiforgery()
+        .RequireAuthorization(Policies.AdminAccess);
     }
 }

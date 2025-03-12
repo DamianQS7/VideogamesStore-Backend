@@ -24,8 +24,9 @@ public static class CreateGameEndpoint
             if(user?.Identity?.IsAuthenticated == false)
                  return Results.Unauthorized();
 
-            //string? userId = user?.FindFirstValue(ClaimTypes.NameIdentifier); // Old way, requires options in Program.cs
-            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Sub); // New way
+           
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
+                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Results.Unauthorized();

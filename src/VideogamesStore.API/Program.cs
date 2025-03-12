@@ -6,6 +6,7 @@ using VideogamesStore.API.Features.Games;
 using VideogamesStore.API.Features.Genres;
 using VideogamesStore.API.Features.ShoppingCarts;
 using VideogamesStore.API.Features.ShoppingCarts.Authorization;
+using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.ErrorHandling;
 using VideogamesStore.API.Shared.Extensions;
 using VideogamesStore.API.Shared.FileUpload;
@@ -34,17 +35,13 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    // Register Authentication
-    builder.Services.AddAuthentication()
-                    .AddJwtBearer(options => 
-                    { 
-                        options.MapInboundClaims = false;
-                        options.TokenValidationParameters.RoleClaimType = "role"; 
-                    });
+    builder.Services.AddGameStoreAuthentication();
 
     builder.Services.AddGameStoreAuthorization();
 
     builder.Services.AddSingleton<IAuthorizationHandler, CartAuthorizationHandler>();
+
+    builder.Services.AddSingleton<KeycloakClaimsTransformer>();
     
     builder.Services.AddHttpContextAccessor()
                     .AddSingleton<FileUploader>();

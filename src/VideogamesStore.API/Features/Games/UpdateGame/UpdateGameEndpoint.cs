@@ -24,7 +24,8 @@ public static class UpdateGameEndpoint
             if(user?.Identity?.IsAuthenticated == false)
                  return Results.Unauthorized();
 
-            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
+                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
 
             if (string.IsNullOrEmpty(userId))
                 return Results.Unauthorized();

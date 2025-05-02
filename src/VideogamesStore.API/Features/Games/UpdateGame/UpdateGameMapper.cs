@@ -16,9 +16,10 @@ public static class UpdateGameMapper
         game.Description = request.Description;
     }
 
-    public static void UpdateImageUrl(this Game game, string imageUrl)
+    public static void UpdateImagesUrls(this Game game, string imageUrl, string detailsImageUrl)
     {
         game.ImageUrl = imageUrl;
+        game.DetailsImageUrl = detailsImageUrl;
     }
 
     public static void UpdateLastUpdatedBy(this Game game, string userId)

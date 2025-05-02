@@ -31,21 +31,20 @@ public static class CreateGameEndpoint
             if (string.IsNullOrEmpty(userId))
                 return Results.Unauthorized();
 
-            string imageUrl = DefaultImageUrl;
+            string imageUrl;
+            string detailsImgUrl;
 
-            if(request.ImageFile is not null)
+            try 
             {
-                var fileUploadResult = await fileUploader.UploadFileAsync(
-                    request.ImageFile, StorageNames.GameImagesFolder
-                );
-
-                if (!fileUploadResult.IsSuccess)
-                    return Results.BadRequest(fileUploadResult.ErrorMessage);
-
-                imageUrl = fileUploadResult.FileUrl!;
+                imageUrl = await fileUploader.TryUploadFileAsync(request.ImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
+                detailsImgUrl = await fileUploader.TryUploadFileAsync(request.DetailsImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
+            }
+            catch(InvalidOperationException ex)
+            {
+                return Results.BadRequest(ex.Message);
             }
 
-            Game game = request.MapToGame(imageUrl, userId!);
+            Game game = request.MapToGame(imageUrl, detailsImgUrl, userId!);
 
             await dbContext.Games.AddAsync(game);
             await dbContext.SaveChangesAsync();

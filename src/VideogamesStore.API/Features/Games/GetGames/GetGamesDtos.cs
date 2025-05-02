@@ -14,9 +14,10 @@ public static class GetGamesDtos
         decimal Price,
         DateOnly ReleaseDate,
         string ImageUrl,
+        string DetailsImageUrl,
         string Description,
         string LastUpdatedBy
     );
 
-    public record PagedResponse(int TotalPages, IEnumerable<GetGamesResponse> Data);
+    public record PagedResponse(int TotalPages, int TotalCount, IEnumerable<GetGamesResponse> Data);
 }

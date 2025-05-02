@@ -15,6 +15,7 @@ public static class CreateGameDtos
     )
     {
         public IFormFile? ImageFile { get; set; }
+        public IFormFile? DetailsImageFile { get; set; }
     };
 
     public record CreateGameResponse(
@@ -27,6 +28,7 @@ public static class CreateGameDtos
         DateOnly ReleaseDate, 
         string Description,
         string ImageUrl,
+        string DetailsImageUrl,
         string LastUpdatedBy
     );
 }

@@ -2,7 +2,23 @@ namespace VideogamesStore.API.Shared.FileUpload;
 
 public class FileUploader(IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor)
 {
-    public async Task<FileUploadResult> UploadFileAsync(IFormFile file, string folderPath)
+
+    public async Task<string> TryUploadFileAsync(IFormFile file, string defaultImageUrl, string folderPath)
+    {
+        if(file is not null) 
+        {
+            var fileUploadResult = await UploadFileAsync(file, folderPath);
+
+            if(!fileUploadResult.IsSuccess)
+                throw new InvalidOperationException(fileUploadResult.ErrorMessage);
+
+            return fileUploadResult.FileUrl!;
+        }
+
+        return defaultImageUrl;
+    }
+
+    private async Task<FileUploadResult> UploadFileAsync(IFormFile file, string folderPath)
     {
         // Check if we have a valid file
         if (file == null || file.Length == 0)

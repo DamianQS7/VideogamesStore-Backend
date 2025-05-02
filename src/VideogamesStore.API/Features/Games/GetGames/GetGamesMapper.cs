@@ -16,6 +16,7 @@ public static class GetGamesMapper
             game.ReleaseDate,
             game.ImageUrl,
             game.Description,
+            game.DetailsImageUrl,
             game.LastUpdatedBy
         );
 }

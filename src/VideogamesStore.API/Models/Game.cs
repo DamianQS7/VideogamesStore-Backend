@@ -12,5 +12,6 @@ public class Game
     public DateOnly ReleaseDate { get; set; }
     public required string Description { get; set; }
     public required string ImageUrl { get; set; }
+    public required string DetailsImageUrl { get; set; }
     public required string LastUpdatedBy { get; set; }
 }

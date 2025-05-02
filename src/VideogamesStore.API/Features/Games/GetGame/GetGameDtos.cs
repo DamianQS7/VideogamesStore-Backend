@@ -12,6 +12,7 @@ public static class GetGameDtos
         DateOnly ReleaseDate, 
         string Description,
         string ImageUrl,
+        string DetailsImageUrl,
         string LastUpdatedBy
     );
 }

@@ -31,7 +31,7 @@ public static class GetGamesEndpoint
         int totalCount = await dbContext.Games.CountAsync();
         int totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
         
-        return new PagedResponse(totalPages, games);
+        return new PagedResponse(totalPages, totalCount, games);
     }
         
 }

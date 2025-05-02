@@ -15,5 +15,6 @@ public static class UpdateGameDtos
     )
     {
         public IFormFile? ImageFile { get; set; }
+        public IFormFile? DetailsImageFile { get; set; }
     };
 }

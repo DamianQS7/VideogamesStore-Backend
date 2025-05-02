@@ -36,17 +36,22 @@ public static class UpdateGameEndpoint
 
             existingGame.UpdateWithRequest(request);
 
-            if (request.ImageFile is not null)
-            {
-                var fileUploadResult = await fileUploader.UploadFileAsync(
-                    request.ImageFile, StorageNames.GameImagesFolder
-                );
-                
-                if (!fileUploadResult.IsSuccess)
-                    return Results.BadRequest(fileUploadResult.ErrorMessage);
+            string imageUrl;
+            string detailsImageUrl;
 
-                existingGame.UpdateImageUrl(fileUploadResult.FileUrl!);
+            try
+            {
+                imageUrl = await fileUploader.TryUploadFileAsync(
+                    request.ImageFile!, existingGame.ImageUrl, StorageNames.GameImagesFolder);
+                detailsImageUrl = await fileUploader.TryUploadFileAsync(
+                    request.DetailsImageFile!, existingGame.DetailsImageUrl, StorageNames.GameImagesFolder);
             }
+            catch(InvalidOperationException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+
+            existingGame.UpdateImagesUrls(imageUrl, detailsImageUrl);
 
             await dbContext.SaveChangesAsync();
             

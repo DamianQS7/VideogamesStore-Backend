@@ -39,6 +39,16 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddGameStoreAuthorization();
 
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("TestingFrontEnd", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    });
+
     builder.Services.AddSingleton<IAuthorizationHandler, CartAuthorizationHandler>();
 
     builder.Services.AddSingleton<KeycloakClaimsTransformer>();
@@ -53,7 +63,7 @@ var app = builder.Build();
 
     app.UseAuthentication();
     app.UseAuthorization();
-
+    app.UseCors("TestingFrontEnd");
     app.MapGames();
     app.MapGenres();
     app.MapShoppingCarts();

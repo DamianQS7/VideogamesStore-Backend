@@ -2,6 +2,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
+using VideogamesStore.API.Shared.Authorization;
 
 namespace VideogamesStore.API.Features.Games.DeleteGame;
 
@@ -17,6 +18,7 @@ public static class DeleteGameEndpoint
 
             return Results.NoContent();
         })
-        .WithName(EndpointNames.DeleteGame);
+        .WithName(EndpointNames.DeleteGame)
+        .RequireAuthorization(Policies.AdminAccess);
     }
 }

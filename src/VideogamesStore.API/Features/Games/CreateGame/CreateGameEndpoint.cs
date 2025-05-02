@@ -1,7 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
+using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.FileUpload;
 using static VideogamesStore.API.Features.Games.CreateGame.CreateGameDtos;
 
@@ -13,25 +16,35 @@ public static class CreateGameEndpoint
     public static void MapPostGame(this IEndpointRouteBuilder app)
     {
         app.MapPost("/", async ([FromForm] CreateGameRequest request, 
-                                GameStoreContext dbContext, 
-                                ILogger<Program> logger,
-                                FileUploader fileUploader) => 
+                                [FromServices] GameStoreContext dbContext, 
+                                [FromServices] ILogger<Program> logger,
+                                [FromServices] FileUploader fileUploader,
+                                ClaimsPrincipal user) => 
         {
-            string imageUrl = DefaultImageUrl;
+            if(user?.Identity?.IsAuthenticated == false)
+                 return Results.Unauthorized();
 
-            if(request.ImageFile is not null)
+           
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
+                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrEmpty(userId))
+                return Results.Unauthorized();
+
+            string imageUrl;
+            string detailsImgUrl;
+
+            try 
             {
-                var fileUploadResult = await fileUploader.UploadFileAsync(
-                    request.ImageFile, StorageNames.GameImagesFolder
-                );
-
-                if (!fileUploadResult.IsSuccess)
-                    return Results.BadRequest(fileUploadResult.ErrorMessage);
-
-                imageUrl = fileUploadResult.FileUrl!;
+                imageUrl = await fileUploader.TryUploadFileAsync(request.ImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
+                detailsImgUrl = await fileUploader.TryUploadFileAsync(request.DetailsImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
+            }
+            catch(InvalidOperationException ex)
+            {
+                return Results.BadRequest(ex.Message);
             }
 
-            Game game = request.MapToGame(imageUrl);
+            Game game = request.MapToGame(imageUrl, detailsImgUrl, userId!);
 
             await dbContext.Games.AddAsync(game);
             await dbContext.SaveChangesAsync();
@@ -45,6 +58,7 @@ public static class CreateGameEndpoint
         })
         .WithName(EndpointNames.PostGame)
         .WithParameterValidation() // This comes from nuget package MinimalApis.Extensions
-        .DisableAntiforgery();
+        .DisableAntiforgery()
+        .RequireAuthorization(Policies.AdminAccess);
     }
 }

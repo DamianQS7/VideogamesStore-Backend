@@ -1,7 +1,10 @@
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
+using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.FileUpload;
 using static VideogamesStore.API.Features.Games.UpdateGame.UpdateGameDtos;
 
@@ -15,8 +18,17 @@ public static class UpdateGameEndpoint
             Guid id, 
             [FromForm] UpdateGameRequest request, 
             GameStoreContext dbContext,
-            FileUploader fileUploader) => 
+            FileUploader fileUploader,
+            ClaimsPrincipal user) => 
         {
+            if(user?.Identity?.IsAuthenticated == false)
+                 return Results.Unauthorized();
+
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
+                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+
+            if (string.IsNullOrEmpty(userId))
+                return Results.Unauthorized();
             Game? existingGame = await dbContext.Games.FindAsync(id);
             
             if (existingGame is null)
@@ -24,17 +36,22 @@ public static class UpdateGameEndpoint
 
             existingGame.UpdateWithRequest(request);
 
-            if (request.ImageFile is not null)
-            {
-                var fileUploadResult = await fileUploader.UploadFileAsync(
-                    request.ImageFile, StorageNames.GameImagesFolder
-                );
-                
-                if (!fileUploadResult.IsSuccess)
-                    return Results.BadRequest(fileUploadResult.ErrorMessage);
+            string imageUrl;
+            string detailsImageUrl;
 
-                existingGame.UpdateImageUrl(fileUploadResult.FileUrl!);
+            try
+            {
+                imageUrl = await fileUploader.TryUploadFileAsync(
+                    request.ImageFile!, existingGame.ImageUrl, StorageNames.GameImagesFolder);
+                detailsImageUrl = await fileUploader.TryUploadFileAsync(
+                    request.DetailsImageFile!, existingGame.DetailsImageUrl, StorageNames.GameImagesFolder);
             }
+            catch(InvalidOperationException ex)
+            {
+                return Results.BadRequest(ex.Message);
+            }
+
+            existingGame.UpdateImagesUrls(imageUrl, detailsImageUrl);
 
             await dbContext.SaveChangesAsync();
             
@@ -42,6 +59,7 @@ public static class UpdateGameEndpoint
         })
         .WithName(EndpointNames.UpdateGame)
         .WithParameterValidation()
-        .DisableAntiforgery();
+        .DisableAntiforgery()
+        .RequireAuthorization(Policies.AdminAccess);
     }
 }

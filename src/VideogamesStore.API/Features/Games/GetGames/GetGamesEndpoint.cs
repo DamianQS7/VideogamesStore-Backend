@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
@@ -8,10 +9,13 @@ namespace VideogamesStore.API.Features.Games.GetGames;
 public static class GetGamesEndpoint
 {
     public static void MapGetGames(this IEndpointRouteBuilder app)
-        => app.MapGet("/", Handler).WithName(EndpointNames.GetGames);
+        => app.MapGet("/", Handler)
+              .WithName(EndpointNames.GetGames)
+              .AllowAnonymous();
 
     private static async Task<PagedResponse>? Handler(
-        GameStoreContext dbContext, [AsParameters] GetGamesRequest request)
+        [FromServices] GameStoreContext dbContext, 
+        [AsParameters] GetGamesRequest request)
     {
         var games = await dbContext.Games
                             .Where(game => string.IsNullOrWhiteSpace(request.Search) 
@@ -27,7 +31,7 @@ public static class GetGamesEndpoint
         int totalCount = await dbContext.Games.CountAsync();
         int totalPages = (int)Math.Ceiling(totalCount / (double)request.PageSize);
         
-        return new PagedResponse(totalPages, games);
+        return new PagedResponse(totalPages, totalCount, games);
     }
         
 }

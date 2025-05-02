@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VideogamesStore.API.Data;
 
@@ -10,36 +11,14 @@ using VideogamesStore.API.Data;
 namespace VideogamesStore.API.Data.Migrations
 {
     [DbContext(typeof(GameStoreContext))]
-    partial class GameStoreContextModelSnapshot : ModelSnapshot
+    [Migration("20250310165648_AddLastUpdatedBy")]
+    partial class AddLastUpdatedBy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.10");
-
-            modelBuilder.Entity("VideogamesStore.API.Models.CartItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<Guid>("ShoppingCartId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GameId");
-
-                    b.HasIndex("ShoppingCartId");
-
-                    b.ToTable("CartItems");
-                });
 
             modelBuilder.Entity("VideogamesStore.API.Models.Game", b =>
                 {
@@ -48,10 +27,6 @@ namespace VideogamesStore.API.Data.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DetailsImageUrl")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -106,34 +81,6 @@ namespace VideogamesStore.API.Data.Migrations
                     b.ToTable("Genres");
                 });
 
-            modelBuilder.Entity("VideogamesStore.API.Models.ShoppingCart", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShoppingCarts");
-                });
-
-            modelBuilder.Entity("VideogamesStore.API.Models.CartItem", b =>
-                {
-                    b.HasOne("VideogamesStore.API.Models.Game", "Game")
-                        .WithMany()
-                        .HasForeignKey("GameId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VideogamesStore.API.Models.ShoppingCart", null)
-                        .WithMany("Items")
-                        .HasForeignKey("ShoppingCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("VideogamesStore.API.Models.Game", b =>
                 {
                     b.HasOne("VideogamesStore.API.Models.Genre", "Genre")
@@ -143,11 +90,6 @@ namespace VideogamesStore.API.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Genre");
-                });
-
-            modelBuilder.Entity("VideogamesStore.API.Models.ShoppingCart", b =>
-                {
-                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

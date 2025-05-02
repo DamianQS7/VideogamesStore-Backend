@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
@@ -8,13 +9,14 @@ public static class GetGameEndpoint
 {
     public static void MapGetGame(this IEndpointRouteBuilder app)
     {
-        app.MapGet("/{id}", async (Guid id, GameStoreContext dbContext) => 
+        app.MapGet("/{id}", async ([FromRoute] Guid id, [FromServices] GameStoreContext dbContext) => 
         {
             Game? game = await dbContext.Games.FindAsync(id);
 
             return game is null ? Results.NotFound() 
                                 : Results.Ok(game.MapToResponse());
         })
-        .WithName(EndpointNames.GetGame); 
+        .WithName(EndpointNames.GetGame)
+        .AllowAnonymous(); 
     }
 }

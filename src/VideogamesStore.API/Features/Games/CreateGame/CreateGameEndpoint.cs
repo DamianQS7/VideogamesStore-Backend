@@ -26,7 +26,7 @@ public static class CreateGameEndpoint
 
            
             string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
-                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+                             user?.FindFirstValue(CustomClaimTypes.UserId);
 
             if (string.IsNullOrEmpty(userId))
                 return Results.Unauthorized();

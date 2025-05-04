@@ -35,7 +35,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
 
-    builder.Services.AddGameStoreAuthentication();
+    builder.AddGameStoreAuthentication();
 
     builder.Services.AddGameStoreAuthorization();
 
@@ -51,7 +51,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSingleton<IAuthorizationHandler, CartAuthorizationHandler>();
 
-    builder.Services.AddSingleton<KeycloakClaimsTransformer>();
+    builder.Services.AddSingleton<ClaimsTransformer>();
     
     builder.Services.AddHttpContextAccessor()
                     .AddSingleton<FileUploader>();

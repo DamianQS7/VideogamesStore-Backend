@@ -1,4 +1,6 @@
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Net.Http.Headers;
 using VideogamesStore.API.Shared.Authorization;
 
 namespace VideogamesStore.API.Shared.Extensions;
@@ -18,37 +20,77 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddGameStoreAuthentication(this IServiceCollection services)
+    public static IHostApplicationBuilder AddGameStoreAuthentication(this IHostApplicationBuilder builder)
     {
-        services.AddAuthentication(Schemes.Keycloak)
-                .AddJwtBearer(options => 
-                { 
-                    options.MapInboundClaims = false;
-                    options.TokenValidationParameters.RoleClaimType = CustomClaimTypes.Role; 
-                })
-                .AddJwtBearer(Schemes.Keycloak, options =>
+        var authBuilder = builder.Services.AddAuthentication(Schemes.KeycloakOrEntra); // Default scheme
+
+        if(builder.Environment.IsDevelopment())
+        {
+            authBuilder.AddJwtBearer(options => 
+            { 
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters.RoleClaimType = CustomClaimTypes.Role; 
+            })
+            .AddJwtBearer(Schemes.Keycloak, options =>
+            {
+                options.MapInboundClaims = false;
+                options.TokenValidationParameters.RoleClaimType = CustomClaimTypes.Role;
+                //options.Events = new JwtBearerEvents { OnTokenValidated = LogJwtBearerEvents() }; // Uncomment if you need to log the claims contained in the token
+                options.Events = new JwtBearerEvents
                 {
-                    options.MapInboundClaims = false;
-                    options.TokenValidationParameters.RoleClaimType = CustomClaimTypes.Role;
-                    options.Authority = "http://localhost:8080/realms/gamestore";
-                    options.Audience = "gamestore-api";
-                    options.RequireHttpsMetadata = false; //dev only
-                    //options.Events = new JwtBearerEvents { OnTokenValidated = LogJwtBearerEvents() }; // Uncomment if you need to log the claims contained in the token
-                    options.Events = new JwtBearerEvents
+                    OnTokenValidated = context => 
                     {
-                        OnTokenValidated = context => 
-                        {
-                            var claimTransformer = context.HttpContext
-                                                          .RequestServices
-                                                          .GetRequiredService<KeycloakClaimsTransformer>();
+                        var claimTransformer = context.HttpContext
+                                                        .RequestServices
+                                                        .GetRequiredService<ClaimsTransformer>();
 
-                            claimTransformer.Transform(context);
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
+                        claimTransformer.TransformClaims(context, CustomClaimTypes.Scope, JwtRegisteredClaimNames.Sub);
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        }
+                
+        authBuilder.AddJwtBearer(Schemes.Entra, options => 
+        {
+            options.MapInboundClaims = false;
+            options.TokenValidationParameters.RoleClaimType = CustomClaimTypes.Roles;
+            builder.Configuration.GetSection("Authentication:Schemes:Entra").Bind(options);
+            options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context => 
+                    {
+                        var claimTransformer = context.HttpContext
+                                                        .RequestServices
+                                                        .GetRequiredService<ClaimsTransformer>();
 
-        return services;
+                        claimTransformer.TransformClaims(context, CustomClaimTypes.EntraScope, CustomClaimTypes.EntraOid);
+                        return Task.CompletedTask;
+                    }
+                };
+        });
+
+        authBuilder.AddPolicyScheme(Schemes.KeycloakOrEntra, Schemes.KeycloakOrEntra, options => 
+        {
+            options.ForwardDefaultSelector = context => 
+            {
+                string authorization = context.Request.Headers[HeaderNames.Authorization]!;
+
+                if(!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
+                {
+                    var token = authorization["Bearer ".Length..].Trim();
+
+                    var jwtHandler = new JwtSecurityTokenHandler();
+
+                    return jwtHandler.CanReadToken(token) && 
+                            jwtHandler.ReadJwtToken(token).Issuer.Contains("ciamlogin.com") ? Schemes.Entra : Schemes.Keycloak;
+                }
+
+                return Schemes.Entra;
+            };
+        });
+
+        return builder;
     }
 
     private static Func<TokenValidatedContext, Task> LogJwtBearerEvents()

@@ -25,16 +25,15 @@ public static class UpdateGameEndpoint
                  return Results.Unauthorized();
 
             string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
-                             user?.FindFirstValue(JwtRegisteredClaimNames.Sub);
+                             user?.FindFirstValue(CustomClaimTypes.UserId);
 
             if (string.IsNullOrEmpty(userId))
                 return Results.Unauthorized();
+
             Game? existingGame = await dbContext.Games.FindAsync(id);
             
             if (existingGame is null)
                 return Results.NotFound();
-
-            existingGame.UpdateWithRequest(request);
 
             string imageUrl;
             string detailsImageUrl;
@@ -51,8 +50,8 @@ public static class UpdateGameEndpoint
                 return Results.BadRequest(ex.Message);
             }
 
-            existingGame.UpdateImagesUrls(imageUrl, detailsImageUrl);
-
+            existingGame.UpdateGame(request, imageUrl, detailsImageUrl, userId);
+            
             await dbContext.SaveChangesAsync();
             
             return Results.NoContent();

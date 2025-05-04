@@ -5,6 +5,14 @@ namespace VideogamesStore.API.Features.Games.UpdateGame;
 
 public static class UpdateGameMapper
 {
+
+    public static void UpdateGame(this Game game, UpdateGameRequest request, string imageUrl, string detailsImageUrl, string userId)
+    {
+        game.UpdateWithRequest(request);
+        game.UpdateImagesUrls(imageUrl, detailsImageUrl);
+        game.UpdateLastUpdatedBy(userId);
+    }
+    
     public static void UpdateWithRequest(this Game game, UpdateGameRequest request)
     {
         game.Name = request.Name;

@@ -13,7 +13,7 @@ public class CartAuthorizationHandler
     protected override Task HandleRequirementAsync(
         AuthorizationHandlerContext context, CartOwnerOrAdminRequirement requirement, ShoppingCart resource)
     {
-        var currentUserId = context.User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var currentUserId = context.User.FindFirstValue(CustomClaimTypes.UserId);
 
         if (string.IsNullOrEmpty(currentUserId))
             return Task.CompletedTask;

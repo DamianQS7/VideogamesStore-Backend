@@ -1,7 +1,9 @@
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
 using VideogamesStore.API.Shared.Authorization;
+using VideogamesStore.API.Shared.FileUpload;
 
 namespace VideogamesStore.API.Shared.Extensions;
 
@@ -16,6 +18,19 @@ public static class ServiceCollectionExtensions
                 .AddPolicy(Policies.AdminAccess, 
                     builder => builder.RequireClaim(CustomClaimTypes.Scope, ApiAccessScope)
                                       .RequireRole(Roles.Admin));
+
+        return services;
+    }
+
+    public static IServiceCollection AddFileUploader(this IServiceCollection services)
+    {
+        services.AddSingleton(serviceProvider => 
+                {
+                    var config = serviceProvider.GetRequiredService<IConfiguration>();
+                    var connString = config.GetConnectionString("Blobs");
+                    return new BlobServiceClient(connString);
+                })
+                .AddSingleton<AzureFileUploader>();
 
         return services;
     }

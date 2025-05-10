@@ -18,7 +18,7 @@ public static class UpdateGameEndpoint
             Guid id, 
             [FromForm] UpdateGameRequest request, 
             GameStoreContext dbContext,
-            FileUploader fileUploader,
+            AzureFileUploader fileUploader,
             ClaimsPrincipal user) => 
         {
             if(user?.Identity?.IsAuthenticated == false)
@@ -41,9 +41,9 @@ public static class UpdateGameEndpoint
             try
             {
                 imageUrl = await fileUploader.TryUploadFileAsync(
-                    request.ImageFile!, existingGame.ImageUrl, StorageNames.GameImagesFolder);
+                    request.ImageFile!, existingGame.ImageUrl, StorageNames.GameImagesBlob);
                 detailsImageUrl = await fileUploader.TryUploadFileAsync(
-                    request.DetailsImageFile!, existingGame.DetailsImageUrl, StorageNames.GameImagesFolder);
+                    request.DetailsImageFile!, existingGame.DetailsImageUrl, StorageNames.GameImagesBlob);
             }
             catch(InvalidOperationException ex)
             {

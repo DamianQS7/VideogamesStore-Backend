@@ -18,7 +18,7 @@ public static class CreateGameEndpoint
         app.MapPost("/", async ([FromForm] CreateGameRequest request, 
                                 [FromServices] GameStoreContext dbContext, 
                                 [FromServices] ILogger<Program> logger,
-                                [FromServices] FileUploader fileUploader,
+                                [FromServices] AzureFileUploader fileUploader,
                                 ClaimsPrincipal user) => 
         {
             if(user?.Identity?.IsAuthenticated == false)
@@ -36,8 +36,8 @@ public static class CreateGameEndpoint
 
             try 
             {
-                imageUrl = await fileUploader.TryUploadFileAsync(request.ImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
-                detailsImgUrl = await fileUploader.TryUploadFileAsync(request.DetailsImageFile!, DefaultImageUrl, StorageNames.GameImagesFolder);
+                imageUrl = await fileUploader.TryUploadFileAsync(request.ImageFile!, DefaultImageUrl, StorageNames.GameImagesBlob);
+                detailsImgUrl = await fileUploader.TryUploadFileAsync(request.DetailsImageFile!, DefaultImageUrl, StorageNames.GameImagesBlob);
             }
             catch(InvalidOperationException ex)
             {

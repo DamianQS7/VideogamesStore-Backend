@@ -9,7 +9,6 @@ using VideogamesStore.API.Features.ShoppingCarts.Authorization;
 using VideogamesStore.API.Shared.Authorization;
 using VideogamesStore.API.Shared.ErrorHandling;
 using VideogamesStore.API.Shared.Extensions;
-using VideogamesStore.API.Shared.FileUpload;
 
 var builder = WebApplication.CreateBuilder(args);
 {
@@ -29,7 +28,8 @@ var builder = WebApplication.CreateBuilder(args);
     });
 
     // Error Handling Configuration
-    builder.Services.AddProblemDetails().AddExceptionHandler<GlobalExceptionHandler>();
+    builder.Services.AddProblemDetails()
+                    .AddExceptionHandler<GlobalExceptionHandler>();
 
     // Open API Support
     builder.Services.AddEndpointsApiExplorer();
@@ -53,14 +53,12 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSingleton<ClaimsTransformer>();
     
-    builder.Services.AddHttpContextAccessor()
-                    .AddSingleton<FileUploader>();
+    builder.Services.AddFileUploader();
+            
 }
 
 var app = builder.Build();
 {
-    app.UseStaticFiles();
-
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseCors("TestingFrontEnd");

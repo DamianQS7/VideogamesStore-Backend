@@ -5,8 +5,11 @@ namespace VideogamesStore.API.Features.Games.GetGames;
 
 public static class GetGamesMapper
 {
-    public static GetGamesResponse MapToResponse(this Game game)
-        => new (
+    public static GetGamesResponse MapToResponse(this Game game, Func<string, string>? cdnUrlTransformer = null)
+    {
+        cdnUrlTransformer ??= url => url;
+
+        return new (
             game.Id,
             game.Name,
             game.Platform,
@@ -14,9 +17,11 @@ public static class GetGamesMapper
             game.Genre!.Name,
             game.Price,
             game.ReleaseDate,
-            game.ImageUrl,
+            cdnUrlTransformer(game.ImageUrl),
             game.Description,
-            game.DetailsImageUrl,
+            cdnUrlTransformer(game.DetailsImageUrl),
             game.LastUpdatedBy
         );
+    }
+        
 }

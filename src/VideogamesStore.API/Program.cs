@@ -7,6 +7,7 @@ using VideogamesStore.API.Features.Genres;
 using VideogamesStore.API.Features.ShoppingCarts;
 using VideogamesStore.API.Features.ShoppingCarts.Authorization;
 using VideogamesStore.API.Shared.Authorization;
+using VideogamesStore.API.Shared.CDN;
 using VideogamesStore.API.Shared.ErrorHandling;
 using VideogamesStore.API.Shared.Extensions;
 
@@ -52,6 +53,7 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<IAuthorizationHandler, CartAuthorizationHandler>();
 
     builder.Services.AddSingleton<ClaimsTransformer>();
+    builder.Services.AddSingleton<CdnUrlTransformer>();
     
     builder.Services.AddFileUploader();
             

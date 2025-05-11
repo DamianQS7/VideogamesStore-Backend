@@ -21,8 +21,11 @@ public static class CreateGameMapper
                 LastUpdatedBy = userId
             };
 
-    public static CreateGameResponse MapToResponse(this Game game)
-        => new (
+    public static CreateGameResponse MapToResponse(this Game game, Func<string, string>? cdnUrlTransformer = null)
+    {
+        cdnUrlTransformer ??= url => url;
+
+        return new (
             game.Id,
             game.Name,
             game.Publisher,
@@ -31,9 +34,10 @@ public static class CreateGameMapper
             game.Price,
             game.ReleaseDate,
             game.Description,
-            game.ImageUrl,
-            game.DetailsImageUrl,
+            cdnUrlTransformer(game.ImageUrl),
+            cdnUrlTransformer(game.DetailsImageUrl),
             game.LastUpdatedBy
         );
+    }
 }
 

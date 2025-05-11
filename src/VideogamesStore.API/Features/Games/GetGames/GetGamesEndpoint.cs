@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
+using VideogamesStore.API.Shared.CDN;
 using static VideogamesStore.API.Features.Games.GetGames.GetGamesDtos;
 
 namespace VideogamesStore.API.Features.Games.GetGames;
@@ -15,6 +16,7 @@ public static class GetGamesEndpoint
 
     private static async Task<PagedResponse>? Handler(
         [FromServices] GameStoreContext dbContext, 
+        [FromServices] CdnUrlTransformer cdnUrlTransformer,
         [AsParameters] GetGamesRequest request)
     {
         var games = await dbContext.Games
@@ -24,7 +26,7 @@ public static class GetGamesEndpoint
                             .Skip((request.PageNumber - 1) * request.PageSize)
                             .Take(request.PageSize)
                             .Include(game => game.Genre) 
-                            .Select(game => game.MapToResponse())
+                            .Select(game => game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl))
                             .AsNoTracking()
                             .ToListAsync();
 

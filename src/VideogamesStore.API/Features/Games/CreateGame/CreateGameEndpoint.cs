@@ -5,6 +5,7 @@ using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games.Constants;
 using VideogamesStore.API.Models;
 using VideogamesStore.API.Shared.Authorization;
+using VideogamesStore.API.Shared.CDN;
 using VideogamesStore.API.Shared.FileUpload;
 using static VideogamesStore.API.Features.Games.CreateGame.CreateGameDtos;
 
@@ -19,6 +20,7 @@ public static class CreateGameEndpoint
                                 [FromServices] GameStoreContext dbContext, 
                                 [FromServices] ILogger<Program> logger,
                                 [FromServices] AzureFileUploader fileUploader,
+                                [FromServices] CdnUrlTransformer cdnUrlTransformer,
                                 ClaimsPrincipal user) => 
         {
             if(user?.Identity?.IsAuthenticated == false)
@@ -54,7 +56,7 @@ public static class CreateGameEndpoint
             return Results.CreatedAtRoute(
                 EndpointNames.GetGame, 
                 new { id = game.Id}, 
-                game.MapToResponse());
+                game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl));
         })
         .WithName(EndpointNames.PostGame)
         .WithParameterValidation() // This comes from nuget package MinimalApis.Extensions

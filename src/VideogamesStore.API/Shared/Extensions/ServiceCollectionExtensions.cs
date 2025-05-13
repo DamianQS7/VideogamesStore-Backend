@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Azure.Identity;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
@@ -27,8 +28,19 @@ public static class ServiceCollectionExtensions
         services.AddSingleton(serviceProvider => 
                 {
                     var config = serviceProvider.GetRequiredService<IConfiguration>();
-                    var connString = config.GetConnectionString("Blobs");
-                    return new BlobServiceClient(connString);
+                    var environment = serviceProvider.GetRequiredService<IHostEnvironment>();
+
+                    var connString = config.GetConnectionString("Blobs")
+                                    ?? throw new InvalidOperationException("Storage URL is missing");
+
+                    return environment.IsDevelopment() 
+                        ? new BlobServiceClient(connString)
+                        : new BlobServiceClient(
+                            new Uri(connString), 
+                            new DefaultAzureCredential(new DefaultAzureCredentialOptions
+                            {
+                                ManagedIdentityClientId = config["AZURE_MANAGED_ID_CLIENT_ID"]
+                            }));
                 })
                 .AddSingleton<AzureFileUploader>();
 

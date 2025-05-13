@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Azure;
 using VideogamesStore.API.Data;
 using VideogamesStore.API.Features.Games;
 using VideogamesStore.API.Features.Genres;
@@ -54,6 +55,7 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddSingleton<ClaimsTransformer>();
     builder.Services.AddSingleton<CdnUrlTransformer>();
+    builder.Services.AddSingleton<AzureEventSourceLogForwarder>();
     
     builder.Services.AddFileUploader();
             
@@ -71,9 +73,15 @@ var app = builder.Build();
     app.UseHttpLogging();
 
     if(app.Environment.IsDevelopment())
+    {
         app.UseSwagger();
+    }
     else
+    {
+        app.Services.GetRequiredService<AzureEventSourceLogForwarder>().Start();
         app.UseExceptionHandler();
+    }
+        
 
     app.UseStatusCodePages();
     await app.InitializeDbAsync();

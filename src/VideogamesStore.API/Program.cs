@@ -1,3 +1,4 @@
+using Azure.Identity;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +15,10 @@ using VideogamesStore.API.Shared.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 {
+    var azureCredential = builder.Configuration.GetAzureCredential();
+    
     // Database Configuration
-    string? connString = builder.Configuration.GetConnectionString("VideogamesStore");
-    //builder.Services.AddDbContext<GameStoreContext>(options => options.UseSqlite(connString));
-    builder.Services.AddSqlite<GameStoreContext>(connString);
+    builder.AddGameStoreNpgsql<GameStoreContext>("VideogamesStore_PostgresDb", azureCredential);
 
     // HttpLogging Configuration
     builder.Services.AddHttpLogging(opt => 
@@ -56,8 +57,8 @@ var builder = WebApplication.CreateBuilder(args);
     builder.Services.AddSingleton<ClaimsTransformer>();
     builder.Services.AddSingleton<CdnUrlTransformer>();
     builder.Services.AddSingleton<AzureEventSourceLogForwarder>();
-    
-    builder.Services.AddFileUploader();
+
+    builder.Services.AddFileUploader(azureCredential);
             
 }
 

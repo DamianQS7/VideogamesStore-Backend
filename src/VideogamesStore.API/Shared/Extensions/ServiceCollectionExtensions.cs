@@ -1,5 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
-using Azure.Identity;
+using Azure.Core;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Net.Http.Headers;
@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddFileUploader(this IServiceCollection services)
+    public static IServiceCollection AddFileUploader(this IServiceCollection services, TokenCredential credential)
     {
         services.AddSingleton(serviceProvider => 
                 {
@@ -35,12 +35,7 @@ public static class ServiceCollectionExtensions
 
                     return environment.IsDevelopment() 
                         ? new BlobServiceClient(connString)
-                        : new BlobServiceClient(
-                            new Uri(connString), 
-                            new DefaultAzureCredential(new DefaultAzureCredentialOptions
-                            {
-                                ManagedIdentityClientId = config["AZURE_MANAGED_ID_CLIENT_ID"]
-                            }));
+                        : new BlobServiceClient(new Uri(connString), credential);
                 })
                 .AddSingleton<AzureFileUploader>();
 

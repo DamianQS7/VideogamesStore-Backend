@@ -17,7 +17,7 @@ public static class GetGameEndpoint
             Game? game = await dbContext.Games.FindAsync(id);
 
             return game is null ? Results.NotFound() 
-                                : Results.Ok(game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl));
+                                : Results.Ok(game.MapToResponse());
         })
         .WithName(EndpointNames.GetGame)
         .AllowAnonymous(); 

@@ -26,7 +26,7 @@ public static class GetGamesEndpoint
                             .Skip((request.PageNumber - 1) * request.PageSize)
                             .Take(request.PageSize)
                             .Include(game => game.Genre) 
-                            .Select(game => game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl))
+                            .Select(game => game.MapToResponse())
                             .AsNoTracking()
                             .ToListAsync();
 

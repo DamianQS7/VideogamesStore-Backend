@@ -21,13 +21,13 @@ public static class CreateGameEndpoint
                                 [FromServices] ILogger<Program> logger,
                                 [FromServices] AzureFileUploader fileUploader,
                                 [FromServices] CdnUrlTransformer cdnUrlTransformer,
-                                ClaimsPrincipal user) => 
+                                ClaimsPrincipal user) =>
         {
-            if(user?.Identity?.IsAuthenticated == false)
-                 return Results.Unauthorized();
+            if (user?.Identity?.IsAuthenticated == false)
+                return Results.Unauthorized();
 
-           
-            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ?? 
+
+            string? userId = user?.FindFirstValue(JwtRegisteredClaimNames.Email) ??
                              user?.FindFirstValue(CustomClaimTypes.UserId);
 
             if (string.IsNullOrEmpty(userId))
@@ -36,12 +36,12 @@ public static class CreateGameEndpoint
             string imageUrl;
             string detailsImgUrl;
 
-            try 
+            try
             {
                 imageUrl = await fileUploader.TryUploadFileAsync(request.ImageFile!, DefaultImageUrl, StorageNames.GameImagesBlob);
                 detailsImgUrl = await fileUploader.TryUploadFileAsync(request.DetailsImageFile!, DefaultImageUrl, StorageNames.GameImagesBlob);
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return Results.BadRequest(ex.Message);
             }
@@ -54,9 +54,10 @@ public static class CreateGameEndpoint
             logger.LogInformation("Created Game: {gameName}", game.Name);
 
             return Results.CreatedAtRoute(
-                EndpointNames.GetGame, 
-                new { id = game.Id}, 
-                game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl));
+                EndpointNames.GetGame,
+                new { id = game.Id },
+                game.MapToResponse()); 
+                //game.MapToResponse(cdnUrlTransformer.TransformToCdnUrl)); // Not using Front Door, too expensive.
         })
         .WithName(EndpointNames.PostGame)
         .WithParameterValidation() // This comes from nuget package MinimalApis.Extensions

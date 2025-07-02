@@ -9,7 +9,7 @@ public static class GetGamesMapper
     {
         cdnUrlTransformer ??= url => url;
 
-        return new (
+        return new(
             game.Id,
             game.Name,
             game.Platform,
@@ -23,5 +23,20 @@ public static class GetGamesMapper
             game.LastUpdatedBy
         );
     }
+
+    public static GetGamesResponse MapToResponse(this Game game) =>
+        new (
+            game.Id,
+            game.Name,
+            game.Platform,
+            game.Publisher,
+            game.Genre!.Name,
+            game.Price,
+            game.ReleaseDate,
+            game.ImageUrl,
+            game.Description,
+            game.DetailsImageUrl,
+            game.LastUpdatedBy
+        );
         
 }
